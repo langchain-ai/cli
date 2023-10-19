@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "__package_name__"
+version = "0.0.1"
+description = ""
+authors = []
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8.1,<4.0"
+langchain = ">=0.0.313, <0.1"
+
+[tool.langserve]
+export_module = "__package_name__.chain"
+export_attr = "chain"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

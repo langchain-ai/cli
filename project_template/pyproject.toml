@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "langservehub-template"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8.1,<4.0"
+sse-starlette = "^1.6.5"
+langserve = {git = "https://github.com/langchain-ai/langserve", rev = "erick/langservehub"}
+tomli-w = "^1.0.0"
+uvicorn = "^0.23.2"
+fastapi = "^0.103.2"
+
+[tool.poetry.group.dev.dependencies]
+poethepoet = "^0.24.1"
+uvicorn = "^0.23.2"
+pygithub = "^2.1.1"
+
+[tool.poe.tasks.start]
+cmd="poetry run uvicorn app.server:app --reload --port $port --host $host"
+args = [
+    {name = "port", help = "port to run on", default = "8000"},
+    {name = "host", help = "host to run on", default = "127.0.0.1"}
+]
+
+[tool.poe.tasks.add]
+script="langserve.scripts:download"
+args = [
+    {name = "package", help = "package name", positional = true, default = ''},
+    {name = "package_dir", help = "path to packages", default = "packages"},
+    {name = "repo", help = "An alternative GitHub Repo", default = "langchain-ai/langserve-hub"},
+    {name = "api_path", help = "The API path to mount", default = ""}
+]
+[tool.poe.tasks.remove]
+script="langserve.scripts:remove"
+args = [
+    {name = "path", help = "api path", positional = true},
+    {name = "package_dir", help = "path to packages", default = "packages"}
+]
+
+[tool.poe.tasks.list]
+script="langserve.scripts:list"
+args = [
+    { name = "package_dir", help = "path to packages", default = "packages"}
+]
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

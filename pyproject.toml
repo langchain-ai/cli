@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "langc"
+version = "0.0.1"
+description = ""
+authors = ["Erick Friis <erick@langchain.dev>"]
+readme = "README.md"
+include = [
+    {path="project_template/**/*", format="wheel"},
+    {path="package_template/**/*", format="wheel"}
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+typer = "^0.9.0"
+
+[tool.poetry.scripts]
+langc = "langc.cli:app"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

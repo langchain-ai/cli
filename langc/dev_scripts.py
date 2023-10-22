@@ -13,7 +13,7 @@ def start_demo_server(*, port: int = 8000, host: str = "0.0.0.0"):
     """
     app = FastAPI()
     package_root = get_package_root()
-    add_package_route(app, package_root, "/")
+    add_package_route(app, package_root, "")
     import uvicorn
 
     # cast port as an int in case it comes as a string argument

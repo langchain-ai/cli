@@ -55,7 +55,7 @@ def add(
 
     e.g.:
     langchain serve add simple-pirate
-    langchain serve add git+ssh://git@github.com:efriis/simple-pirate.git
+    langchain serve add git+ssh://git@github.com/efriis/simple-pirate.git
     langchain serve add git+https://github.com/efriis/hub.git#devbranch#subdirectory=mypackage
     """
     project_root = get_package_root(project_dir)

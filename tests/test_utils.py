@@ -4,9 +4,9 @@ from langc.constants import DEFAULT_GIT_REPO, DEFAULT_GIT_BRANCH
 
 def test_dependency_string() -> None:
     assert _parse_dependency_string(
-        "git+ssh://git@github.com:efriis/myrepo.git"
+        "git+ssh://git@github.com/efriis/myrepo.git"
     ) == DependencySource(
-        git="ssh://git@github.com:efriis/myrepo.git",
+        git="ssh://git@github.com/efriis/myrepo.git",
         ref=DEFAULT_GIT_BRANCH,
         subdirectory=None,
     )

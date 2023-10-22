@@ -18,4 +18,10 @@ def start_demo_server(*, port: int = 8000, host: str = "0.0.0.0"):
 
     # cast port as an int in case it comes as a string argument
     # from poe
-    uvicorn.run(app, host=host, port=int(port), reload=True)
+    uvicorn.run(
+        app,
+        host=host,
+        port=int(port),
+        reload=True,
+        reload_dirs=[str(package_root.resolve())],
+    )

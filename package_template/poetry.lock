@@ -645,7 +645,7 @@ uvicorn = "^0.23.2"
 type = "git"
 url = "https://github.com/langchain-ai/cli"
 reference = "HEAD"
-resolved_reference = "0d86e2c3b65c915e5728f3659f5017b37a0ab7f3"
+resolved_reference = "1fb0577b5c439e1c3a47d84a68e5023e6c3b2e0c"
 
 [[package]]
 name = "langchain"

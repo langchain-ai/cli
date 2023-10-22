@@ -709,7 +709,7 @@ server = ["fastapi (>=0.90.1)", "sse-starlette (>=1.3.0,<2.0.0)"]
 type = "git"
 url = "https://github.com/langchain-ai/langserve"
 reference = "erick/add-package-routes"
-resolved_reference = "44971afc0f075ee61fc67fdff8b0fcd29e1b5430"
+resolved_reference = "466abd201849f3b9517e8ca53508f0e908cd6590"
 
 [[package]]
 name = "langsmith"

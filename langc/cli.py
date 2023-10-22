@@ -20,6 +20,9 @@ def start(
         Optional[str], typer.Option(help="The host to run the server on")
     ] = None,
 ) -> None:
+    """
+    Start the LangServe instance, whether it's a hub package or a serve project.
+    """
     cmd = ["poetry", "run", "poe", "start"]
     if port is not None:
         cmd += ["--port", str(port)]

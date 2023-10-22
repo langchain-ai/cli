@@ -22,5 +22,5 @@ def start_demo_server(*, port: int = 8000, host: str = "0.0.0.0"):
         app,
         host=host,
         port=int(port),
-        reload_dirs=[str(package_root.resolve())],
+        reload_includes=str(package_root.resolve()) + "/**/*.py",
     )

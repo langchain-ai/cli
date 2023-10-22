@@ -12,6 +12,8 @@ from langc.utils.packages import get_package_root
 from langserve.packages import list_packages, get_langserve_export
 import tomli
 
+REPO_DIR = typer.get_app_dir("langchain") / "git_repos"
+
 serve = typer.Typer(no_args_is_help=True, add_completion=False)
 
 
@@ -63,7 +65,7 @@ def add(
     for i, dependency in enumerate(dependencies):
         # update repo
         typer.echo(f"Adding {dependency}...")
-        source_path = update_repo(dependency)
+        source_path = update_repo(dependency, REPO_DIR)
         pyproject_path = source_path / "pyproject.toml"
         langserve_export = get_langserve_export(pyproject_path)
 

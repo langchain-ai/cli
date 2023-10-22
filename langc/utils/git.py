@@ -14,10 +14,6 @@ class DependencySource(TypedDict):
     subdirectory: Optional[str]
 
 
-LANGCHAIN_DIRECTORY = Path.home() / ".langchain"
-REPO_DIRECTORY = LANGCHAIN_DIRECTORY / "git_repos"
-
-
 # use poetry dependency string format
 def _parse_dependency_string(package_string: str) -> DependencySource:
     if package_string.startswith("git+"):
@@ -60,7 +56,7 @@ def _parse_dependency_string(package_string: str) -> DependencySource:
         return DependencySource(git=gitstring, ref=branch, subdirectory=subdirectory)
 
 
-def _get_repo_path(dependency: DependencySource) -> Path:
+def _get_repo_path(dependency: DependencySource, repo_dir: Path) -> Path:
     # only based on git for now
     gitstring = dependency["git"]
     hashed = hashlib.sha256(gitstring.encode("utf-8")).hexdigest()[:8]
@@ -71,13 +67,13 @@ def _get_repo_path(dependency: DependencySource) -> Path:
     foldername = re.sub(r"[^a-zA-Z0-9_]", "_", removed_extras)
 
     directory_name = f"{foldername}_{hashed}"
-    return REPO_DIRECTORY / directory_name
+    return repo_dir / directory_name
 
 
-def update_repo(gitpath: str) -> Path:
+def update_repo(gitpath: str, repo_dir: Path) -> Path:
     # see if path already saved
     dependency = _parse_dependency_string(gitpath)
-    repo_path = _get_repo_path(dependency)
+    repo_path = _get_repo_path(dependency, repo_dir)
     if not repo_path.exists():
         repo = Repo.clone_from(dependency["git"], repo_path)
     else:

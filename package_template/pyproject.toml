@@ -22,7 +22,7 @@ export_module = "__package_name__.chain"
 export_attr = "chain"
 
 [tool.poe.tasks.start]
-script="langc.dev_scripts:start_demo_server"
+cmd="poetry run uvicorn langc.dev_scripts:create_demo_server --reload --port $port --host $host"
 args = [
     {name = "port", help = "port to run on", default = "8000"},
     {name = "host", help = "host to run on", default = "127.0.0.1"}

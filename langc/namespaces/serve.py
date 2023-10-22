@@ -12,7 +12,7 @@ from langc.utils.packages import get_package_root
 from langserve.packages import list_packages, get_langserve_export
 import tomli
 
-REPO_DIR = typer.get_app_dir("langchain") / "git_repos"
+REPO_DIR = Path(typer.get_app_dir("langchain")) / "git_repos"
 
 serve = typer.Typer(no_args_is_help=True, add_completion=False)
 
@@ -20,9 +20,10 @@ serve = typer.Typer(no_args_is_help=True, add_completion=False)
 @serve.command()
 def new(
     name: Annotated[str, typer.Argument(help="The name of the folder to create")],
-    packages: Annotated[
+    *,
+    package: Annotated[
         Optional[List[str]], typer.Option(help="Packages to seed the project with")
-    ],
+    ] = None,
 ):
     """
     Create a new LangServe application.
@@ -32,22 +33,29 @@ def new(
     destination_dir = Path.cwd() / name if name != "." else Path.cwd()
     shutil.copytree(project_template_dir, destination_dir, dirs_exist_ok=name == ".")
 
+    # poetry install
+    subprocess.run(["poetry", "install"], cwd=destination_dir)
+
     # add packages if specified
-    if packages is not None:
-        add(packages)
+    if package is not None and len(package) > 0:
+        add(package, project_dir=destination_dir)
 
 
 @serve.command()
 def add(
     dependencies: Annotated[List[str], typer.Argument(help="The dependency to add")],
-    api_paths: Annotated[List[str], typer.Option(help="API paths to add")] = [],
+    *,
+    api_path: Annotated[List[str], typer.Option(help="API paths to add")] = [],
+    project_dir: Annotated[
+        Optional[Path], typer.Option(help="The project directory")
+    ] = None,
 ):
     """
     Adds the specified package to the current LangServe instance.
     """
-    project_root = get_package_root()
+    project_root = get_package_root(project_dir)
 
-    if len(api_paths) != 0 and len(api_paths) != len(dependencies):
+    if len(api_path) != 0 and len(api_path) != len(dependencies):
         raise typer.BadParameter(
             "The number of API paths must match the number of dependencies."
         )
@@ -77,7 +85,7 @@ def add(
             continue
 
         api_path = (
-            api_paths[i] if len(api_paths) != 0 else langserve_export["package_name"]
+            api_path[i] if len(api_path) != 0 else langserve_export["package_name"]
         )
         destination_path = package_dir / api_path
         if destination_path.exists():
@@ -88,7 +96,7 @@ def add(
         copy_repo(source_path, destination_path)
         # poetry install
         subprocess.run(
-            ["poetry", "add", "--editable", destination_path], cwd=Path.cwd()
+            ["poetry", "add", "--editable", destination_path], cwd=project_root
         )
 
 

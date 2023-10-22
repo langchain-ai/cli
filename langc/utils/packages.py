@@ -1,15 +1,16 @@
 from pathlib import Path
-from typing import Set
+from typing import Set, Optional
 
 
-def get_package_root() -> Path:
+def get_package_root(cwd: Optional[Path]) -> Path:
     # traverse path for routes to host (any directory holding a pyproject.toml file)
-    package_root = Path.cwd()
+    package_root = Path.cwd() if cwd is None else cwd
     visited: Set[Path] = set()
-    while True:
+    while package_root not in visited:
+        visited.add(package_root)
+
         pyproject_path = package_root / "pyproject.toml"
         if pyproject_path.exists():
             return package_root
-        if package_root.parent == package_root:
-            raise FileNotFoundError("No pyproject.toml found")
         package_root = package_root.parent
+    raise FileNotFoundError("No pyproject.toml found")

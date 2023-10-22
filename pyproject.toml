@@ -10,11 +10,26 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8.1,<4.0"
 typer = "^0.9.0"
+tomli = "^2.0.1"
+gitpython = "^3.1.40"
+langserve = {git = "https://github.com/langchain-ai/langserve", rev = "erick/add-package-routes"}
+fastapi = "^0.104.0"
+uvicorn = "^0.23.2"
 
 [tool.poetry.scripts]
-langc = "langc.cli:app"
+langchain = "langc.cli:app"
+
+
+[tool.poetry.group.dev.dependencies]
+poethepoet = "^0.24.1"
+pytest = "^7.4.2"
+pytest-watch = "^4.2.0"
+
+[tool.poe.tasks]
+test = "poetry run pytest"
+watch = "poetry run ptw"
 
 
 [build-system]

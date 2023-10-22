@@ -4,9 +4,9 @@ from langc.constants import DEFAULT_GIT_REPO, DEFAULT_GIT_BRANCH
 
 def test_dependency_string() -> None:
     assert _parse_dependency_string(
-        "git+ssh://github.com:efriis/myrepo.git"
+        "git+ssh://git@github.com:efriis/myrepo.git"
     ) == DependencySource(
-        git="ssh://github.com:efriis/myrepo.git",
+        git="ssh://git@github.com:efriis/myrepo.git",
         ref=DEFAULT_GIT_BRANCH,
         subdirectory=None,
     )
@@ -20,9 +20,9 @@ def test_dependency_string() -> None:
     )
 
     assert _parse_dependency_string(
-        "git+ssh://github.com:efriis/myrepo.git#develop"
+        "git+ssh://git@github.com:efriis/myrepo.git#develop"
     ) == DependencySource(
-        git="ssh://github.com:efriis/myrepo.git", ref="develop", subdirectory=None
+        git="ssh://git@github.com:efriis/myrepo.git", ref="develop", subdirectory=None
     )
 
     assert _parse_dependency_string("simple-pirate") == DependencySource(

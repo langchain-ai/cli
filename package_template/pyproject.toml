@@ -9,10 +9,20 @@ readme = "README.md"
 python = ">=3.8.1,<4.0"
 langchain = ">=0.0.313, <0.1"
 
+[tool.poetry.group.dev.dependencies]
+langc = {git = "https://github.com/langchain-ai/cli"}
+poethepoet = "^0.24.1"
+
 [tool.langserve]
 export_module = "__package_name__.chain"
 export_attr = "chain"
 
+[tool.poe.tasks.start]
+script="langc.dev_scripts:start_demo_server"
+args = [
+    {name = "port", help = "port to run on", default = "8000"},
+    {name = "host", help = "host to run on", default = "127.0.0.1"}
+]
 
 [build-system]
 requires = ["poetry-core"]

@@ -3,13 +3,14 @@ Manage LangServe application projects.
 """
 
 import typer
-from typing import Annotated, Optional, List
+from typing import Annotated, Optional, List, Union
 from pathlib import Path
 import shutil
-import re
+import subprocess
 from langc.utils.git import copy_repo, update_repo
 from langc.utils.packages import get_package_root
 from langserve.packages import list_packages, get_langserve_export
+import tomli
 
 serve = typer.Typer(no_args_is_help=True, add_completion=False)
 
@@ -37,33 +38,77 @@ def new(
 @serve.command()
 def add(
     dependencies: Annotated[List[str], typer.Argument(help="The dependency to add")],
+    api_paths: Annotated[
+        Optional[List[str]], typer.Option(help="API paths to add")
+    ] = None,
 ):
     """
     Adds the specified package to the current LangServe instance.
     """
-    package_dir = Path.cwd() / "packages"
-    for dependency in dependencies:
+    project_root = get_package_root()
+
+    if api_paths is not None and len(api_paths) != len(dependencies):
+        raise typer.BadParameter(
+            "The number of API paths must match the number of dependencies."
+        )
+
+    # get installed packages from pyproject.toml
+    root_pyproject_path = project_root / "pyproject.toml"
+    with open(root_pyproject_path, "rb") as pyproject_file:
+        pyproject = tomli.load(pyproject_file)
+    installed_packages = (
+        pyproject.get("tool", {}).get("poetry", {}).get("dependencies", {})
+    )
+    installed_names = set(installed_packages.keys())
+
+    package_dir = project_root / "packages"
+    for i, dependency in enumerate(dependencies):
         # update repo
         typer.echo(f"Adding {dependency}...")
         source_path = update_repo(dependency)
         pyproject_path = source_path / "pyproject.toml"
         langserve_export = get_langserve_export(pyproject_path)
 
-        destination_path = package_dir / langserve_export.package_name
+        # detect name conflict
+        if langserve_export.package_name in installed_names:
+            typer.echo(
+                f"Package with name {langserve_export.package_name} already installed. Skipping...",
+            )
+            continue
+
+        api_path = (
+            api_paths[i] if api_paths is not None else langserve_export.package_name
+        )
+        destination_path = package_dir / api_path
         if destination_path.exists():
             typer.echo(
                 f"Endpoint {langserve_export.package_name} already exists. Skipping...",
             )
             continue
         copy_repo(source_path, destination_path)
+        # poetry install
+        subprocess.run(
+            ["poetry", "add", "--editable", destination_path], cwd=Path.cwd()
+        )
 
 
 @serve.command()
-def remove(name: str):
+def remove(
+    api_paths: Annotated[List[str], typer.Argument(help="The API paths to remove")]
+):
     """
     Removes the specified package from the current LangServe instance.
     """
-    pass
+    for api_path in api_paths:
+        package_dir = Path.cwd() / "packages" / api_path
+        if not package_dir.exists():
+            typer.echo(f"Endpoint {api_path} does not exist. Skipping...")
+            continue
+        pyproject = package_dir / "pyproject.toml"
+        langserve_export = get_langserve_export(pyproject)
+        typer.echo(f"Removing {langserve_export.package_name}...")
+        subprocess.run(["poetry", "remove", langserve_export.package_name])
+        shutil.rmtree(package_dir)
 
 
 @serve.command()

@@ -15,7 +15,6 @@ sse-starlette = "^1.6.5"
 [tool.poetry.group.dev.dependencies]
 langc = {git = "https://github.com/langchain-ai/cli"}
 poethepoet = "^0.24.1"
-uvicorn = {version = "^0.23.2", extras = ["standard"]}
 
 [tool.langserve]
 export_module = "__package_name__.chain"

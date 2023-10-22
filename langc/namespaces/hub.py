@@ -6,10 +6,8 @@ import typer
 from typing import Annotated, Optional
 from pathlib import Path
 import shutil
+import subprocess
 import re
-from fastapi import FastAPI
-from langserve.packages import add_package_route
-from langc.utils.packages import get_package_root
 
 hub = typer.Typer(no_args_is_help=True, add_completion=False)
 
@@ -60,16 +58,19 @@ def new(name: Annotated[str, typer.Argument(help="The name of the folder to crea
 @hub.command()
 def start(
     *,
-    port: Annotated[int, typer.Option(help="The port to run the server on")] = 8000,
-    host: Annotated[str, typer.Option(help="The host to run the server on")] = "0.0.0.0"
-):
+    port: Annotated[
+        Optional[int], typer.Option(help="The port to run the server on")
+    ] = None,
+    host: Annotated[
+        Optional[str], typer.Option(help="The host to run the server on")
+    ] = None,
+) -> None:
     """
-    Starts a demo server for the current hub package.
+    Starts the LangServe instance.
     """
-    app = FastAPI()
-    package_root = get_package_root()
-    add_package_route(app, package_root, "/")
-    typer.echo("Starting server...")
-    import uvicorn
-
-    uvicorn.run(app, host=host, port=port)
+    cmd = ["poetry", "run", "poe", "start"]
+    if port is not None:
+        cmd += ["--port", str(port)]
+    if host is not None:
+        cmd += ["--host", host]
+    subprocess.run(cmd)

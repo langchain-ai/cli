@@ -1,4 +1,6 @@
 import typer
+import subprocess
+from typing import Annotated, Optional
 
 from langc.namespaces import hub
 from langc.namespaces import serve
@@ -9,11 +11,21 @@ app.add_typer(serve.serve, name="serve", help=serve.__doc__)
 
 
 @app.command()
-def start():
-    """
-    Start the hub or serve server, depending which directory you are in.
-    """
-    pass
+def start(
+    *,
+    port: Annotated[
+        Optional[int], typer.Option(help="The port to run the server on")
+    ] = None,
+    host: Annotated[
+        Optional[str], typer.Option(help="The host to run the server on")
+    ] = None,
+) -> None:
+    cmd = ["poetry", "run", "poe", "start"]
+    if port is not None:
+        cmd += ["--port", str(port)]
+    if host is not None:
+        cmd += ["--host", host]
+    subprocess.run(cmd)
 
 
 if __name__ == "__main__":

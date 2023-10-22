@@ -3,7 +3,7 @@ Manage LangServe application projects.
 """
 
 import typer
-from typing import Annotated, Optional, List, Union
+from typing import Annotated, Optional, List
 from pathlib import Path
 import shutil
 import subprocess
@@ -38,16 +38,14 @@ def new(
 @serve.command()
 def add(
     dependencies: Annotated[List[str], typer.Argument(help="The dependency to add")],
-    api_paths: Annotated[
-        Optional[List[str]], typer.Option(help="API paths to add")
-    ] = None,
+    api_paths: Annotated[List[str], typer.Option(help="API paths to add")] = [],
 ):
     """
     Adds the specified package to the current LangServe instance.
     """
     project_root = get_package_root()
 
-    if api_paths is not None and len(api_paths) != len(dependencies):
+    if len(api_paths) != 0 and len(api_paths) != len(dependencies):
         raise typer.BadParameter(
             "The number of API paths must match the number of dependencies."
         )
@@ -70,19 +68,19 @@ def add(
         langserve_export = get_langserve_export(pyproject_path)
 
         # detect name conflict
-        if langserve_export.package_name in installed_names:
+        if langserve_export["package_name"] in installed_names:
             typer.echo(
-                f"Package with name {langserve_export.package_name} already installed. Skipping...",
+                f"Package with name {langserve_export['package_name']} already installed. Skipping...",
             )
             continue
 
         api_path = (
-            api_paths[i] if api_paths is not None else langserve_export.package_name
+            api_paths[i] if len(api_paths) != 0 else langserve_export["package_name"]
         )
         destination_path = package_dir / api_path
         if destination_path.exists():
             typer.echo(
-                f"Endpoint {langserve_export.package_name} already exists. Skipping...",
+                f"Endpoint {langserve_export['package_name']} already exists. Skipping...",
             )
             continue
         copy_repo(source_path, destination_path)
@@ -106,8 +104,8 @@ def remove(
             continue
         pyproject = package_dir / "pyproject.toml"
         langserve_export = get_langserve_export(pyproject)
-        typer.echo(f"Removing {langserve_export.package_name}...")
-        subprocess.run(["poetry", "remove", langserve_export.package_name])
+        typer.echo(f"Removing {langserve_export['package_name']}...")
+        subprocess.run(["poetry", "remove", langserve_export["package_name"]])
         shutil.rmtree(package_dir)
 
 
@@ -124,3 +122,24 @@ def list():
         typer.echo(
             f"{relative}: ({langserve_export['module']}.{langserve_export['attr']})"
         )
+
+
+@serve.command()
+def start(
+    *,
+    port: Annotated[
+        Optional[int], typer.Option(help="The port to run the server on")
+    ] = None,
+    host: Annotated[
+        Optional[str], typer.Option(help="The host to run the server on")
+    ] = None,
+) -> None:
+    """
+    Starts the LangServe instance.
+    """
+    cmd = ["poetry", "run", "poe", "start"]
+    if port is not None:
+        cmd += ["--port", str(port)]
+    if host is not None:
+        cmd += ["--host", host]
+    subprocess.run(cmd)

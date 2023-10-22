@@ -1124,6 +1124,20 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
+name = "sse-starlette"
+version = "1.6.5"
+description = "\"SSE plugin for Starlette\""
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "sse-starlette-1.6.5.tar.gz", hash = "sha256:819f2c421fb37067380fe3dcaba246c476b02651b7bb7601099a378ad802a0ac"},
+    {file = "sse_starlette-1.6.5-py3-none-any.whl", hash = "sha256:68b6b7eb49be0c72a2af80a055994c13afcaa4761b29226beb208f954c25a642"},
+]
+
+[package.dependencies]
+starlette = "*"
+
+[[package]]
 name = "starlette"
 version = "0.27.0"
 description = "The little ASGI library that shines."
@@ -1359,4 +1373,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.1,<4.0"
-content-hash = "d8bb3918e5936810c4232a92d066e07271ab6eaef0c4fddf13036425f4becaad"
+content-hash = "9e98b00a113d5a186551a09f13144b456334bdbc0c664a39496116fab24bcb69"

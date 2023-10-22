@@ -9,6 +9,8 @@ readme = "README.md"
 python = ">=3.8.1,<4.0"
 langchain = ">=0.0.313, <0.1"
 openai = "^0.28.1"
+fastapi = "^0.104.0"
+sse-starlette = "^1.6.5"
 
 [tool.poetry.group.dev.dependencies]
 langc = {git = "https://github.com/langchain-ai/cli"}

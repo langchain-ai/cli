@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Set, Optional
 
 
-def get_package_root(cwd: Optional[Path]) -> Path:
+def get_package_root(cwd: Optional[Path] = None) -> Path:
     # traverse path for routes to host (any directory holding a pyproject.toml file)
     package_root = Path.cwd() if cwd is None else cwd
     visited: Set[Path] = set()

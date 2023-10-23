@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from langserve import add_package_routes
+from langserve.packages import add_package_routes
 
 app = FastAPI()
 

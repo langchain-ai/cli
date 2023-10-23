@@ -42,6 +42,19 @@ def new(
 
 
 @serve.command()
+def install():
+    package_root = get_package_root() / "packages"
+    for package_path in list_packages(package_root):
+        try:
+            pyproject_path = package_path / "pyproject.toml"
+            langserve_export = get_langserve_export(pyproject_path)
+            typer.echo(f"Installing {langserve_export['package_name']}...")
+            subprocess.run(["poetry", "add", "--editable", package_path])
+        except Exception as e:
+            typer.echo(f"Skipping installing {package_path} due to error: {e}")
+
+
+@serve.command()
 def add(
     dependencies: Annotated[List[str], typer.Argument(help="The dependency to add")],
     *,

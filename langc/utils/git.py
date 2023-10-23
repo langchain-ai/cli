@@ -3,15 +3,44 @@ from pathlib import Path
 
 import shutil
 import re
-from langc.constants import DEFAULT_GIT_REPO, DEFAULT_GIT_BRANCH
+from langc.constants import DEFAULT_GIT_REPO
 import hashlib
 from git import Repo
 
 
 class DependencySource(TypedDict):
     git: str
-    ref: str
+    ref: Optional[str]
     subdirectory: Optional[str]
+
+
+def _get_main_branch(repo: Repo) -> Optional[str]:
+    """
+    Get the name of the main branch of a git repo.
+    From https://stackoverflow.com/questions/69651536/how-to-get-master-main-branch-from-gitpython
+    """
+    try:
+        # replace "origin" with your remote name if differs
+        show_result = repo.git.remote("show", "origin")
+
+        # The show_result contains a wall of text in the language that
+        # is set by your locales. Now you can use regex to extract the
+        # default branch name, but if your language is different
+        # from english, you need to adjust this regex pattern.
+
+        matches = re.search(r"\s*HEAD branch:\s*(.*)", show_result)
+        if matches:
+            default_branch = matches.group(1)
+            return default_branch
+    except Exception:
+        pass
+    # fallback to main/master
+    if "main" in repo.heads:
+        return "main"
+    if "master" in repo.heads:
+        return "master"
+
+    raise ValueError("Could not find main branch")
 
 
 # use poetry dependency string format
@@ -42,7 +71,7 @@ def _parse_dependency_string(package_string: str) -> DependencySource:
                 params_dict["ref"] = param
         return DependencySource(
             git=gitstring,
-            ref=params_dict.get("ref", DEFAULT_GIT_BRANCH),
+            ref=params_dict.get("ref"),
             subdirectory=params_dict.get("subdirectory"),
         )
 
@@ -51,9 +80,8 @@ def _parse_dependency_string(package_string: str) -> DependencySource:
     else:
         # it's a default git repo dependency
         gitstring = DEFAULT_GIT_REPO
-        branch = DEFAULT_GIT_BRANCH
         subdirectory = package_string
-        return DependencySource(git=gitstring, ref=branch, subdirectory=subdirectory)
+        return DependencySource(git=gitstring, ref=None, subdirectory=subdirectory)
 
 
 def _get_repo_path(dependency: DependencySource, repo_dir: Path) -> Path:
@@ -80,7 +108,8 @@ def update_repo(gitpath: str, repo_dir: Path) -> Path:
         repo = Repo(repo_path)
 
     # pull it
-    repo.git.checkout(dependency["ref"])
+    ref = dependency.get("ref") if dependency.get("ref") else _get_main_branch(repo)
+    repo.git.checkout(ref)
 
     repo.git.pull()
 

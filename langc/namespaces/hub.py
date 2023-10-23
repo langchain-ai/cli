@@ -66,7 +66,7 @@ def start(
     ] = None,
 ) -> None:
     """
-    Starts the LangServe instance.
+    Starts a demo LangServe instance for this hub package.
     """
     cmd = ["poetry", "run", "poe", "start"]
     if port is not None:

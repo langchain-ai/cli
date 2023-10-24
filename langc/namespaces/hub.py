@@ -55,6 +55,9 @@ def new(name: Annotated[str, typer.Argument(help="The name of the folder to crea
         readme_contents.replace("__package_name_last__", package_name_last)
     )
 
+    # poetry install
+    subprocess.run(["poetry", "install"], cwd=destination_dir)
+
 
 @hub.command()
 def start(

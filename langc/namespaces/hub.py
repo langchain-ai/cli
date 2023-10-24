@@ -13,9 +13,7 @@ hub = typer.Typer(no_args_is_help=True, add_completion=False)
 
 
 @hub.command()
-def new(
-    name: Annotated[str, typer.Argument(None, help="The name of the folder to create")]
-):
+def new(name: Annotated[str, typer.Argument(help="The name of the folder to create")]):
     """
     Creates a new hub package.
     """
@@ -61,10 +59,10 @@ def new(
 def start(
     *,
     port: Annotated[
-        Optional[int], typer.Option(None, help="The port to run the server on")
+        Optional[int], typer.Option(help="The port to run the server on")
     ] = None,
     host: Annotated[
-        Optional[str], typer.Option(None, help="The host to run the server on")
+        Optional[str], typer.Option(help="The host to run the server on")
     ] = None,
 ) -> None:
     """

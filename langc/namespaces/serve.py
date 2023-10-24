@@ -3,7 +3,8 @@ Manage LangServe application projects.
 """
 
 import typer
-from typing import Annotated, Optional, List
+from typing import Optional, List
+from typing_extensions import Annotated
 from pathlib import Path
 import shutil
 import subprocess

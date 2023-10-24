@@ -124,5 +124,7 @@ def copy_repo(
     source: Path,
     destination: Path,
 ) -> None:
-    ignore_func = lambda _, files: [f for f in files if f == ".git"]
+    def ignore_func(_, files):
+        return [f for f in files if f == ".git"]
+
     shutil.copytree(source, destination, ignore=ignore_func)

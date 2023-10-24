@@ -3,7 +3,8 @@ Manage installable hub packages.
 """
 
 import typer
-from typing import Annotated, Optional
+from typing import Optional
+from typing_extensions import Annotated
 from pathlib import Path
 import shutil
 import subprocess

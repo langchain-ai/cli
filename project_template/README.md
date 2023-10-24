@@ -1,6 +1,11 @@
 # LangServeHub Project Template
 
 ## Installation
+Install the LangChain CLI if you haven't yet
+```bash
+pip install --user --upgrade git+https://github.com/langchain-ai/cli.git
+```
+And install this package's dependencies
 ```bash
 poetry install
 ```
@@ -9,19 +14,19 @@ poetry install
 ```bash
 # if you have problems with `poe`, try `poetry run poe`
 
-# adding packages from https://github.com/langchain-ai/langserve-hub
-poe add simple/pirate
+# adding packages from https://github.com/pingpong-templates/hub
+langchain serve add simple-pirate
 
 # adding custom GitHub repo packages
-poe add --repo=hwchase17/chain-of-verification
+langchain serve add git+https://github.com/hwchase17/chain-of-verification
 
 # with a custom api mount point (defaults to `/{package_name}`)
-poe add simple/translator --api_path=/my/custom/path/translator
+poe add simple-translator --api_path=/my/custom/path/translator
 ```
 
 ## Removing packages
 
 Note: you remove packages by their api path
 ```bash
-poe remove pirate
+langchain serve remove pirate
 ```

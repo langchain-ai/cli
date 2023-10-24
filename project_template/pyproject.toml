@@ -25,27 +25,6 @@ args = [
     {name = "host", help = "host to run on", default = "127.0.0.1"}
 ]
 
-[tool.poe.tasks.add]
-script="langserve.scripts:download"
-args = [
-    {name = "package", help = "package name", positional = true, default = ''},
-    {name = "package_dir", help = "path to packages", default = "packages"},
-    {name = "repo", help = "An alternative GitHub Repo", default = "langchain-ai/langserve-hub"},
-    {name = "api_path", help = "The API path to mount", default = ""}
-]
-[tool.poe.tasks.remove]
-script="langserve.scripts:remove"
-args = [
-    {name = "path", help = "api path", positional = true},
-    {name = "package_dir", help = "path to packages", default = "packages"}
-]
-
-[tool.poe.tasks.list]
-script="langserve.scripts:list"
-args = [
-    { name = "package_dir", help = "path to packages", default = "packages"}
-]
-
 
 [build-system]
 requires = ["poetry-core"]

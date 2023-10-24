@@ -9,6 +9,7 @@ import shutil
 import subprocess
 from langc.utils.git import copy_repo, update_repo
 from langc.utils.packages import get_package_root
+from langc.utils.events import create_events
 from langserve.packages import list_packages, get_langserve_export
 import tomli
 
@@ -88,6 +89,11 @@ def add(
     installed_names = set(installed_packages.keys())
 
     package_dir = project_root / "packages"
+
+    create_events(
+        [{"event": "serve add", "properties": {"package": d}} for d in dependencies]
+    )
+
     for i, dependency in enumerate(dependencies):
         # update repo
         typer.echo(f"Adding {dependency}...")
@@ -102,10 +108,10 @@ def add(
             )
             continue
 
-        api_path = (
+        inner_api_path = (
             api_path[i] if len(api_path) != 0 else langserve_export["package_name"]
         )
-        destination_path = package_dir / api_path
+        destination_path = package_dir / inner_api_path
         if destination_path.exists():
             typer.echo(
                 f"Endpoint {langserve_export['package_name']} already exists. Skipping...",

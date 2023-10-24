@@ -58,12 +58,17 @@ def install():
 
 @serve.command()
 def add(
-    dependencies: Annotated[List[str], typer.Argument(help="The dependency to add")],
+    dependencies: Annotated[
+        Optional[List[str]], typer.Argument(help="The dependency to add")
+    ] = None,
     *,
     api_path: Annotated[List[str], typer.Option(help="API paths to add")] = [],
     project_dir: Annotated[
         Optional[Path], typer.Option(help="The project directory")
     ] = None,
+    repo: Annotated[
+        List[str], typer.Option(help="Shorthand for installing a GitHub Repo")
+    ] = [],
 ):
     """
     Adds the specified package to the current LangServe instance.
@@ -74,6 +79,17 @@ def add(
     langchain serve add git+https://github.com/efriis/hub.git#devbranch#subdirectory=mypackage
     """
     project_root = get_package_root(project_dir)
+
+    if dependencies is None:
+        dependencies = []
+
+    # cannot have both repo and dependencies
+    if len(repo) != 0:
+        if len(dependencies) != 0:
+            raise typer.BadParameter(
+                "Cannot specify both repo and dependencies. Please specify one or the other."
+            )
+        dependencies = [f"git+https://github.com/{r}" for r in repo]
 
     if len(api_path) != 0 and len(api_path) != len(dependencies):
         raise typer.BadParameter(

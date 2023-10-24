@@ -14,10 +14,10 @@ app.add_typer(serve.serve, name="serve", help=serve.__doc__)
 def start(
     *,
     port: Annotated[
-        Optional[int], typer.Option(help="The port to run the server on")
+        Optional[int], typer.Option(None, help="The port to run the server on")
     ] = None,
     host: Annotated[
-        Optional[str], typer.Option(help="The host to run the server on")
+        Optional[str], typer.Option(None, help="The host to run the server on")
     ] = None,
 ) -> None:
     """

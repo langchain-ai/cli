@@ -20,10 +20,11 @@ serve = typer.Typer(no_args_is_help=True, add_completion=False)
 
 @serve.command()
 def new(
-    name: Annotated[str, typer.Argument(help="The name of the folder to create")],
+    name: Annotated[str, typer.Argument(None, help="The name of the folder to create")],
     *,
     package: Annotated[
-        Optional[List[str]], typer.Option(help="Packages to seed the project with")
+        Optional[List[str]],
+        typer.Option(None, help="Packages to seed the project with"),
     ] = None,
 ):
     """
@@ -57,11 +58,13 @@ def install():
 
 @serve.command()
 def add(
-    dependencies: Annotated[List[str], typer.Argument(help="The dependency to add")],
+    dependencies: Annotated[
+        List[str], typer.Argument(None, help="The dependency to add")
+    ],
     *,
-    api_path: Annotated[List[str], typer.Option(help="API paths to add")] = [],
+    api_path: Annotated[List[str], typer.Option(None, help="API paths to add")] = [],
     project_dir: Annotated[
-        Optional[Path], typer.Option(help="The project directory")
+        Optional[Path], typer.Option(None, help="The project directory")
     ] = None,
 ):
     """
@@ -126,7 +129,9 @@ def add(
 
 @serve.command()
 def remove(
-    api_paths: Annotated[List[str], typer.Argument(help="The API paths to remove")]
+    api_paths: Annotated[
+        List[str], typer.Argument(None, help="The API paths to remove")
+    ]
 ):
     """
     Removes the specified package from the current LangServe instance.
@@ -162,10 +167,10 @@ def list():
 def start(
     *,
     port: Annotated[
-        Optional[int], typer.Option(help="The port to run the server on")
+        Optional[int], typer.Option(None, help="The port to run the server on")
     ] = None,
     host: Annotated[
-        Optional[str], typer.Option(help="The host to run the server on")
+        Optional[str], typer.Option(None, help="The host to run the server on")
     ] = None,
 ) -> None:
     """

@@ -3,7 +3,7 @@
 ## Installation
 Install the LangChain CLI if you haven't yet
 ```bash
-pip install --user --upgrade git+https://github.com/langchain-ai/cli.git
+pip install --user --upgrade git+https://github.com/pingpong-templates/cli.git
 ```
 And install this package's dependencies
 ```bash

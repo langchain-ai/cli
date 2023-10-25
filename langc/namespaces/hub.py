@@ -17,7 +17,10 @@ hub = typer.Typer(no_args_is_help=True, add_completion=False)
 def new(
     name: Annotated[str, typer.Argument(help="The name of the folder to create")],
     no_poetry: Annotated[
-        bool, typer.Option("--no-poetry/--with-poetry", help="Don't run poetry install")
+        bool,
+        typer.Option(
+            "--no-poetry/--with-poetry", "-n/", help="Don't run poetry install"
+        ),
     ] = False,
 ):
     """

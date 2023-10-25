@@ -28,7 +28,10 @@ def new(
         typer.Option(help="Packages to seed the project with"),
     ] = None,
     no_poetry: Annotated[
-        bool, typer.Option("--no-poetry/--with-poetry", help="Don't run poetry install")
+        bool,
+        typer.Option(
+            "--no-poetry/--with-poetry", "-n/", help="Don't run poetry install"
+        ),
     ] = False,
 ):
     """
@@ -75,7 +78,10 @@ def add(
         List[str], typer.Option(help="Shorthand for installing a GitHub Repo")
     ] = [],
     no_poetry: Annotated[
-        bool, typer.Option("--no-poetry/--with-poetry", help="Don't run poetry install")
+        bool,
+        typer.Option(
+            "--no-poetry/--with-poetry", "-n/", help="Don't run poetry install"
+        ),
     ] = False,
 ):
     """
@@ -154,7 +160,10 @@ def add(
 def remove(
     api_paths: Annotated[List[str], typer.Argument(help="The API paths to remove")],
     no_poetry: Annotated[
-        bool, typer.Option("--no-poetry/--with-poetry", help="Don't run poetry remove")
+        bool,
+        typer.Option(
+            "--no-poetry/--with-poetry", "-n/", help="Don't run poetry remove"
+        ),
     ] = False,
 ):
     """

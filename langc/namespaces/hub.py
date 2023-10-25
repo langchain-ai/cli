@@ -14,7 +14,12 @@ hub = typer.Typer(no_args_is_help=True, add_completion=False)
 
 
 @hub.command()
-def new(name: Annotated[str, typer.Argument(help="The name of the folder to create")]):
+def new(
+    name: Annotated[str, typer.Argument(help="The name of the folder to create")],
+    no_poetry: Annotated[
+        bool, typer.Option("--no-poetry/--with-poetry", help="Don't run poetry install")
+    ] = False,
+):
     """
     Creates a new hub package.
     """
@@ -56,7 +61,8 @@ def new(name: Annotated[str, typer.Argument(help="The name of the folder to crea
     )
 
     # poetry install
-    subprocess.run(["poetry", "install"], cwd=destination_dir)
+    if not no_poetry:
+        subprocess.run(["poetry", "install"], cwd=destination_dir)
 
 
 @hub.command()

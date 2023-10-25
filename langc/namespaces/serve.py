@@ -27,6 +27,9 @@ def new(
         Optional[List[str]],
         typer.Option(help="Packages to seed the project with"),
     ] = None,
+    no_poetry: Annotated[
+        bool, typer.Option("--no-poetry/--with-poetry", help="Don't run poetry install")
+    ] = False,
 ):
     """
     Create a new LangServe application.
@@ -37,11 +40,12 @@ def new(
     shutil.copytree(project_template_dir, destination_dir, dirs_exist_ok=name == ".")
 
     # poetry install
-    subprocess.run(["poetry", "install"], cwd=destination_dir)
+    if not no_poetry:
+        subprocess.run(["poetry", "install"], cwd=destination_dir)
 
     # add packages if specified
     if package is not None and len(package) > 0:
-        add(package, project_dir=destination_dir)
+        add(package, project_dir=destination_dir, no_poetry=no_poetry)
 
 
 @serve.command()
@@ -70,6 +74,9 @@ def add(
     repo: Annotated[
         List[str], typer.Option(help="Shorthand for installing a GitHub Repo")
     ] = [],
+    no_poetry: Annotated[
+        bool, typer.Option("--no-poetry/--with-poetry", help="Don't run poetry install")
+    ] = False,
 ):
     """
     Adds the specified package to the current LangServe instance.
@@ -137,14 +144,18 @@ def add(
             continue
         copy_repo(source_path, destination_path)
         # poetry install
-        subprocess.run(
-            ["poetry", "add", "--editable", destination_path], cwd=project_root
-        )
+        if not no_poetry:
+            subprocess.run(
+                ["poetry", "add", "--editable", destination_path], cwd=project_root
+            )
 
 
 @serve.command()
 def remove(
-    api_paths: Annotated[List[str], typer.Argument(help="The API paths to remove")]
+    api_paths: Annotated[List[str], typer.Argument(help="The API paths to remove")],
+    no_poetry: Annotated[
+        bool, typer.Option("--no-poetry/--with-poetry", help="Don't run poetry remove")
+    ] = False,
 ):
     """
     Removes the specified package from the current LangServe instance.
@@ -157,7 +168,8 @@ def remove(
         pyproject = package_dir / "pyproject.toml"
         langserve_export = get_langserve_export(pyproject)
         typer.echo(f"Removing {langserve_export['package_name']}...")
-        subprocess.run(["poetry", "remove", langserve_export["package_name"]])
+        if not no_poetry:
+            subprocess.run(["poetry", "remove", langserve_export["package_name"]])
         shutil.rmtree(package_dir)
 
 
